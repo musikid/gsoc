@@ -14,7 +14,7 @@ particularly fearless multithreading, low-level handling and safety.
 
 #### TL;DR Rewrite the tests in Rust, with a custom-built test runner for running them standalone, and rely on Kyua for running tests along with ATF support to get reports.
 
-## Who am I?
+## whoami?
 
 Name: Sayafdine Said\
 GitHub: [musikid](https://github.com/musikid)\
@@ -124,3 +124,7 @@ The program should support ATF, so the command-line interface shoud be compatibl
 [https://github.com/pjd/pjdfstest/issues/59](https://github.com/pjd/pjdfstest/issues/59)
 
 [https://github.com/musikid/pytest-atf.git](https://github.com/musikid/pytest-atf.git)
+
+[https://www.freebsd.org/cgi/man.cgi?query=atf-test-program&sektion=1&apropos=0&manpath=FreeBSD+13.0-RELEASE+and+Ports](https://www.freebsd.org/cgi/man.cgi?query=atf-test-program&sektion=1&apropos=0&manpath=FreeBSD+13.0-RELEASE+and+Ports)
+
+[https://www.freebsd.org/cgi/man.cgi?query=atf-test-case&sektion=4&apropos=0&manpath=FreeBSD+13.0-RELEASE+and+Ports](https://www.freebsd.org/cgi/man.cgi?query=atf-test-case&sektion=4&apropos=0&manpath=FreeBSD+13.0-RELEASE+and+Ports)
