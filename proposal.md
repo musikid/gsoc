@@ -19,11 +19,15 @@ particularly fearless multithreading, low-level handling and safety.
 Name: Sayafdine Said\
 GitHub: [musikid](https://github.com/musikid)\
 Mail address: [musikid@outlook.com](mailto:musikid@outlook.com)\
-Timezone: Paris, France (UTC+2)\
+Timezone: Paris, France (UTC+2)
 
-Fluent in French, English and Spanish\
+Fluent in French, English and Spanish
 
-I wrote fixes for various open source projects, but never been more involved. I also did a bit of yak shaving (meh), [fancy](https://github.com/musikid/fancy.git) being the most complete one. This GSoC is the perfect occasion to be more involved in the open source community, particularly for the FreeBSD's project, that I like.
+I wrote fixes for various open source projects, but never been more involved.
+I also did a bit of yak shaving (meh),
+[fancy](https://github.com/musikid/fancy.git) being the most complete one.
+This GSoC is the perfect occasion to be more involved in the open source community,
+particularly for the FreeBSD project, that I like.
 
 ## Timeline
 
@@ -37,11 +41,34 @@ Finally, I will try to add support for multithreading to our test runner.
 - Get more familiar with the current codebase
 - Review the missing syscalls
 
-### First week
+### 1st week (June 13)
 
 - Iterate on the project's design
 
-### Second week
+### 2nd week - 4rd week (June 20)
+
+- Implement the test collection
+- Implement fixtures
+
+### 5th - 7th weeks (July 11)
+
+- Implement test runner
+
+#### Phase 1 evaluation period (July 25)
+
+________________________
+
+### 8th - 9th weeks (August 1)
+
+- Add ATF support
+
+### 10th - 13th weeks (August 15)
+
+- Add multithreading support
+
+### 13th week - End (September 4)
+
+- Document extensively
 
 ## Architecture
 
@@ -59,7 +86,7 @@ Instead, we will collect them in a slice, along with/within a structure for easi
 
 ### Fixtures
 
-
+We could take inspiration from [pytest](https://docs.pytest.org/en/7.1.x/explanation/fixtures.html) and [rstest](https://docs.rs/rstest/latest/rstest/attr.fixture.html), and use an attribute macro to add the fixtures to the test's parameters.
 
 ### Layout
 
@@ -82,8 +109,18 @@ pjdfs_main!(symlink);
 
 ### Macros
 
+
+
 ### Command-line arguments
+
+The program should support ATF, so the command-line interface shoud be compatible with it. ATF has a really simple interface, consisting only of two running modes:
+
+- `-l`, to list all the tests and their conditions.
+- `[-r resfile] [-s srcdir] [-v var1=value1 [.. -v varN=valueN]] test_case`, to run a test case.
+
 
 ## Relevant links
 
-[]
+[https://github.com/pjd/pjdfstest/issues/59](https://github.com/pjd/pjdfstest/issues/59)
+
+[https://github.com/musikid/pytest-atf.git](https://github.com/musikid/pytest-atf.git)
