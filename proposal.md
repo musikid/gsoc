@@ -4,9 +4,10 @@
 
 This project aims to rewrite the PJDFSTest suite.
 Today, the tests are written in a mix of shell script and C.
-This approach has provided some flexibility and usability, allowing to use syscalls within a shell environment.
-However, it also has disadvantages, the main ones being performance, code duplication and
-higher entry barrier for potential contributors.
+This approach has provided some flexibility and usability,
+allowing to use syscalls within a shell environment.
+However, it also has disadvantages, the main ones being performance,
+code duplication and higher entry barrier for potential contributors.
 We want to improve the test suite, mainly by switching to a unique language.
 After further discussions, we agreed on using Rust, given its numerous advantages,
 particularly fearless multithreading, low-level handling and safety.
@@ -18,6 +19,7 @@ particularly fearless multithreading, low-level handling and safety.
 
 Name: Sayafdine Said\
 GitHub: [musikid](https://github.com/musikid)\
+Discord: musikid.#7043\
 Mail address: [musikid@outlook.com](mailto:musikid@outlook.com)\
 Timezone: Paris, France (UTC+2)
 
@@ -27,12 +29,14 @@ I wrote fixes for various open source projects, but never been more involved.
 I also did a bit of yak shaving (meh),
 [fancy](https://github.com/musikid/fancy.git) being the most complete one.
 This GSoC is the perfect occasion to be more involved in the open source community,
-particularly for the FreeBSD project, that I like.
+particularly for the FreeBSD project, that I love.
 
 ## Timeline
 
-I aim to write first a single-threaded test runner, along with fixtures to be shared between the tests.
-Then, as a secondary objective, I will also add ATF support to rely on Kyua test runner,
+I aim to write first a single-threaded test runner,
+along with fixtures to be shared between the tests.
+Then, as a secondary objective,
+I will add ATF support to rely on Kyua test runner,
 to inherit from its high quality reporting.
 Finally, I will try to add support for multithreading to our test runner.
 
@@ -45,14 +49,15 @@ Finally, I will try to add support for multithreading to our test runner.
 
 - Iterate on the project's design
 
-### 2nd week - 4rd week (June 20)
+### 2nd week - 4th week (June 20)
 
-- Implement the test collection
+- Implement test collection
 - Implement fixtures
 
 ### 5th - 7th weeks (July 11)
 
 - Implement test runner
+- Start writing the tests
 
 #### Phase 1 evaluation period (July 25)
 
@@ -61,14 +66,17 @@ ________________________
 ### 8th - 9th weeks (August 1)
 
 - Add ATF support
+- Continue to write the tests
 
-### 10th - 13th weeks (August 15)
+### 10th - 12th weeks (August 15)
 
 - Add multithreading support
+- Continue to write the tests
 
 ### 13th week - End (September 4)
 
 - Document extensively
+- Write the eventual missing tests
 
 ## Architecture
 
@@ -76,7 +84,7 @@ ________________________
 
 The project will not rely on the Rust testing framework,
 therefore we will to need to do the test collection ourselves.
-Since we plan to adopt an approach similar to Criterion, we will need to write ~~procedural~~ macros.
+Since we plan to adopt an approach similar to Criterion, we will need to write macros.
 Criterion collects the tests in a group (`criterion_group!`), which is turned into a function,
 to finally aggregate all these functions into the main one (`criterion_main!`).
 We want to adopt a similar approach, with some nuances however.
@@ -86,7 +94,11 @@ Instead, we will collect them in a slice, along with/within a structure for easi
 
 ### Fixtures
 
-We could take inspiration from [pytest](https://docs.pytest.org/en/7.1.x/explanation/fixtures.html) and [rstest](https://docs.rs/rstest/latest/rstest/attr.fixture.html), and use an attribute macro to add the fixtures to the test's parameters.
+We could take inspiration from [pytest](https://docs.pytest.org/en/7.1.x/explanation/fixtures.html)
+and [rstest](https://docs.rs/rstest/latest/rstest/attr.fixture.html),
+and use an attribute macro to add the fixtures to the test's parameters.
+Though, since they will certainly be harder to write with attribute (procedural) macros,
+I might switch to just using plain functions if I'm running out of time.
 
 ### Layout
 
@@ -107,13 +119,26 @@ pjdfs_main!(symlink);
 
 ## Interface
 
+This is not definitive, more a draft from the experiments that I did!
+
 ### Macros
 
+#### pjdfs_group!
 
+Make a group of tests.
+
+#### #[pjdfs_test]
+
+Declare a test.
+
+#### #[fixture]
+
+Declare a fixture.
 
 ### Command-line arguments
 
-The program should support ATF, so the command-line interface shoud be compatible with it. ATF has a really simple interface, consisting only of two running modes:
+The program should support ATF, so the command-line interface shoud be compatible with it.
+ATF has a really simple interface, consisting only of two running modes:
 
 - `-l`, to list all the tests and their conditions.
 - `[-r resfile] [-s srcdir] [-v var1=value1 [.. -v varN=valueN]] test_case`, to run a test case.
