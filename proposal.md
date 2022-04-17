@@ -1,4 +1,7 @@
-# Rewrite PJDFSTest suite
+---
+title: GSoC 2022 Proposal -  Rewrite PJDFSTest suite
+mainfont: Fira Sans
+---
 
 ## Introduction
 
@@ -25,16 +28,89 @@ Timezone: Paris, France (UTC+2)
 
 Fluent in French, English and Spanish
 
-I wrote fixes for various open source projects, but never been more involved.
+Currently a computer science student at Sorbonne University,
+I am proficient in Rust, Python, C/C++ and Javascript. 
+I run Arch Linux and FreeBSD, so I am pretty familiar with the Unix environment.
+I wrote fixes for some open source projects, but never been more involved.
 I also did a bit of yak shaving (meh),
 [fancy](https://github.com/musikid/fancy.git) being the most complete one.
-This GSoC is the perfect occasion to be more involved in the open source community,
+This GSoC is the perfect occasion to be involved in the open source community,
 particularly for the FreeBSD project, that I love.
+
+\pagebreak
+
+## Architecture
+
+### Test collection
+
+The project will not rely on the Rust testing framework,
+therefore we will to need to do the test collection ourselves.
+Since we plan to adopt an approach similar to Criterion, we will need to write macros.
+Criterion collects the tests in a group (`criterion_group!`), which is turned into a function,
+to finally aggregate all these functions into the main one (`criterion_main!`).
+We want to adopt a similar approach, with some nuances however.
+
+Since we want to be able to list the tests, collecting them in a function seems more troublesome.
+Instead, we will collect them in a slice, along with/within a structure for easing listing them.
+The structure could be constructed using an attribute macro, or plain syntax if I'm running out of time.
+
+### Fixtures
+
+We can take inspiration from [pytest](https://docs.pytest.org/en/7.1.x/explanation/fixtures.html)
+and [rstest](https://docs.rs/rstest/latest/rstest/attr.fixture.html),
+and use an attribute macro to add the fixtures to the test's parameters.
+Though, since they will certainly be harder to write with attribute (procedural) macros,
+I might switch to using plain functions, if I'm running out of time.
+
+### Layout
+
+Currently, tests are organized by syscalls, and the rewrite should adopt a similar approach.
+Like explained in the previous [section](#test-collection), we declare the tests by groups.
+
+For example:
+
+**symlink/mod.rs**
+```rust
+pjdfs_group!(symlink, return_enoent, return_eaccess);
+```
+
+**main.rs**
+```rust
+pjdfs_main!(symlink);
+```
+
+## Interface
+
+### Macros
+
+#### `pjdfs_group!`
+
+Make a group of tests.
+
+#### `pjdfs_main!`
+
+Make the main function.
+
+#### `#[pjdfs_test]`
+
+Declare a test.
+
+#### `#[fixture]`
+
+Declare a fixture.
+
+### Command-line arguments
+
+The program will support ATF, so the command-line interface should be compatible with it.
+ATF has a really simple interface, consisting only of two running modes:
+
+- `-l`, to list all the tests and their conditions.
+- `[-r resfile] [-s srcdir] [-v var1=value1 [.. -v varN=valueN]] test_case`, to run a test case.
 
 ## Timeline
 
-I aim to write first a single-threaded test runner,
-along with fixtures to be shared between the tests.
+After implementing the test collection along with the fixtures, 
+I aim to write a single-threaded test runner.
 Then, as a secondary objective,
 I will add ATF support to rely on Kyua test runner,
 to inherit from its high quality reporting.
@@ -44,6 +120,7 @@ Finally, I will try to add support for multithreading to our test runner.
 
 - Get more familiar with the current codebase
 - Review the missing syscalls
+- Evaluate the benefits versus downsides of writing the attribute macros
 
 ### 1st week (June 13)
 
@@ -78,71 +155,7 @@ ________________________
 - Document extensively
 - Write the eventual missing tests
 
-## Architecture
-
-### Test collection
-
-The project will not rely on the Rust testing framework,
-therefore we will to need to do the test collection ourselves.
-Since we plan to adopt an approach similar to Criterion, we will need to write macros.
-Criterion collects the tests in a group (`criterion_group!`), which is turned into a function,
-to finally aggregate all these functions into the main one (`criterion_main!`).
-We want to adopt a similar approach, with some nuances however.
-
-Since we want to be able to list the tests, collecting them in a function seems more troublesome.
-Instead, we will collect them in a slice, along with/within a structure for easing listing them.
-
-### Fixtures
-
-We could take inspiration from [pytest](https://docs.pytest.org/en/7.1.x/explanation/fixtures.html)
-and [rstest](https://docs.rs/rstest/latest/rstest/attr.fixture.html),
-and use an attribute macro to add the fixtures to the test's parameters.
-Though, since they will certainly be harder to write with attribute (procedural) macros,
-I might switch to just using plain functions if I'm running out of time.
-
-### Layout
-
-Currently, tests are organized by syscalls, and the rewrite should adopt a similar approach.
-Like explained in the previous [section](#test-collection), we declare the tests by groups.
-
-For example:
-
-**symlink/mod.rs**
-```rust
-pjdfs_group!(symlink, return_enoent, return_eaccess);
-```
-
-**main.rs**
-```rust
-pjdfs_main!(symlink);
-```
-
-## Interface
-
-This is not definitive, more a draft from the experiments that I did!
-
-### Macros
-
-#### pjdfs_group!
-
-Make a group of tests.
-
-#### #[pjdfs_test]
-
-Declare a test.
-
-#### #[fixture]
-
-Declare a fixture.
-
-### Command-line arguments
-
-The program should support ATF, so the command-line interface shoud be compatible with it.
-ATF has a really simple interface, consisting only of two running modes:
-
-- `-l`, to list all the tests and their conditions.
-- `[-r resfile] [-s srcdir] [-v var1=value1 [.. -v varN=valueN]] test_case`, to run a test case.
-
+\pagebreak
 
 ## Relevant links
 
