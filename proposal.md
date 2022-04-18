@@ -50,10 +50,13 @@ Finally, I will try to add support for multithreading to our test runner.
 Adding multithreading and ATF support are not top priorities, though, 
 the main one being to write the tests.
 
+#### NOTE: All the time intervals imply writing the documentation along with the code.
+
 ### Community bonding (May 20)
 
 - Get more familiar with the current codebase
 - Review the missing syscalls
+- Discuss on details
 
 ### 1st week (June 13)
 
@@ -63,7 +66,6 @@ the main one being to write the tests.
 
 - Implement test collection
 - Implement fixtures
-- Write documentation
 
 ### 5th - 7th weeks (July 11)
 
