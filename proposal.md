@@ -34,7 +34,7 @@ Currently a computer science student at Sorbonne University,
 I am proficient in Rust, Python, C/C++ and JavaScript. 
 I run Arch Linux and FreeBSD, so I am pretty familiar with the Unix environment.
 I wrote fixes for some open source projects, but never been more involved.
-I also did a bit of yak shaving,
+I also did a lot of yak shaving,
 [fancy](https://github.com/musikid/fancy.git) being the most complete project I produced.
 This GSoC is the perfect occasion to be involved in the open source community,
 particularly for the FreeBSD project, that I love!
@@ -61,9 +61,8 @@ As an example, [Criterion](https://docs.rs/criterion/latest/criterion/index.html
 
 We want to adopt a similar approach, with some nuances, however.
 
-Since we want to be able to list the tests, collecting them in a function seems more troublesome.
+Since we want to be able to list the tests, collecting them in a function seems troublesome.
 Instead, we will collect them in a slice, along with/within a structure for easing listing them.
-The structure could be constructed using an attribute macro, or plain syntax if I'm running out of time.
 
 ### Test runner
 
@@ -72,6 +71,10 @@ The test runner will not need to have a lot of fancy features. It has to support
 - filtering/skipping tests according to conditions, 
 - printing the status,
 - reading a configuration file.
+
+### Configuration file
+
+The format needs further investigation, but we should at least support filtering by syscalls availability.
 
 ### Macros
 
@@ -82,6 +85,8 @@ Make a group of tests.
 #### `pjdfs_main!`
 
 Make the main function.
+
+#### NOTE: The next macros are not top priorities, more of a convenience if I already implemented the first ones correctly.
 
 #### `#[pjdfs_test(conditions)]`
 
@@ -102,10 +107,13 @@ fn my_test() {
 In the experimental Python [rewrite](https://github.com/pjd/pjdfstest/pull/48/commits/c08d508282bf2b8c8956e911f1cf2ab93b455072#diff-c6f9a6ca51c3f0551ee9b236b5fba6eec1c3a7ae82720e508642b0404dbc6118R28-R32), 
 Python decorators are used.
 
-
 ###### `#[case(args)]`
 
-Declare parameterization.
+Declare parameterization, used with `pjdfs_test`.
+
+We take inspiration from [pytest parameterize](https://docs.pytest.org/en/stable/how-to/parametrize.html#pytest-mark-parametrize)
+and [rstest case](https://docs.rs/rstest/latest/rstest/attr.rstest.html#test-parametrized-cases),
+and add a new parameter for the test.
 
 #### `#[fixture(conditions)]`
 
@@ -131,26 +139,6 @@ fn posix_fallocate_1(posix_fallocate_and_root_user: Something) {}
 #[pjdfs_test(my_own_condition = "yes")]
 fn posix_fallocate_2(posix_fallocate_and_root_user: Something) {}
 ```
-
-### Configuration file
-
-The format needs further investigation, but we should at least support filtering by syscalls availability.
-
-### *ATF support*
-
-To support ATF, we need to be able to output the tests in ATF metadata format.
-The format is fairly simple, consisting only of `key: value` pairs.
-For example:
-
-```
-ident: test_1
-descr: this is a test
-require.user: root
-```
-
-ATF supports specifying some conditions. However, except for privileges, I did not saw any condition which could intersect with ours.
-Thus, the only required keys to support are `ident` and `descr`.
-We can also add `require.user`, and eventually timeout if we want to delegate it to `kyua`.
 
 ### Layout
 
@@ -178,64 +166,82 @@ It has a really simple interface, consisting only of two running modes:
 - `[-r resfile] [-s srcdir] [-v var1=value1 [.. -v varN=valueN]] test_case`, to run a test case.
 
 Otherwise, running the program without arguments should call the runner with all the tests meeting the current conditions.
-For further configuration, we might also add CLI arguments in addition of the configuration file, however it's not a priority compared to having a configuration file.
+
+For further configuration, we might also add CLI arguments in addition of the configuration file, however, it's not a priority compared to having a configuration file.
+
+### *ATF support*
+
+To support ATF, we need to be able to output the tests in ATF metadata format.
+The format is fairly simple, consisting only of `key: value` pairs.
+For example:
+
+```
+ident: test_1
+descr: this is a test
+require.user: root
+```
+
+ATF supports specifying some conditions. However, except for privileges, I did not find any condition which intersects with the ones used in the project.
+Thus, the only required keys to support are `ident` and `descr`.
+We can also add `require.user`, and eventually `timeout` if we want to delegate it to `kyua`.
+
+
+### *Multithreading*
+
+We need to provide test isolation to be able to support multithreading. Further investigations are needed.
 
 ## Timeline
 
 After implementing the test collection along with the fixtures, 
-I aim to write a single-threaded test runner.
+I will to write a single-threaded test runner.
 Then, as a secondary objective,
-I will add ATF support to rely on Kyua test runner,
+I aim to add ATF support so we can rely on `kyua` test runner,
 to inherit from its high quality reporting.
 Finally, I will try to add support for multithreading to our test runner.
 
-Adding multithreading and ATF support are not top priorities, though, 
-the main one being to write the tests.
+Though, adding multithreading is definitely not a priority, neither is ATF support.
 
 #### NOTE: All the time intervals imply writing the documentation along with the code.
 
 ### Community bonding (May 20)
 
 - Get more familiar with the current codebase
-- Review the missing syscalls
+- Review the missing syscalls/functionality
 - Determine the test structure's shape
-- Discuss on details
+- Determine the configuration file fields
+- Discuss on other details
 
 ### 1st week (June 13)
 
 - Iterate on the project's design
-- Start implementing test collection
 
 ### 2nd week - 4th week (June 20)
 
-- Implement fixtures
-- Continue implementing test collection
-- Implement test macro
+- Start implementing test collection
 
 ### 5th - 7th weeks (July 11)
 
 - Implement test runner
-- Continue implementing fixtures
 - Start writing the tests
 
 #### Phase 1 evaluation period (July 25)
 
 ### 8th - 9th weeks (August 1)
 
-- *Add ATF support*
-- Finish implementing fixtures
 - Continue writing the tests
 
 ### 10th - 12th weeks (August 15)
 
-- *Add multithreading support*
 - Continue writing the tests
+- For unexpected delay
+- *Implement test macros*
+- *Add ATF support*
+- *Add multithreading support*
 
 ### 13th week - End (September 4)
 
 - Document extensively
-- Write the eventual missing tests
-- Unexpected delay
+- For unexpected delay
 
 
 ## Relevant links
